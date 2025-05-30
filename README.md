@@ -63,7 +63,7 @@ This backend will serve a mobile/web app that:
 ### 1. Clone + Install
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/mirakour/Transcribe-AI-App.git
 cd transcribe_backend
 python3 -m venv venv
 source venv/bin/activate
