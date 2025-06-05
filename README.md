@@ -1,70 +1,90 @@
-## Transcribe AI [Backend]
+# Transcribe-AI Backend
 
-A backend API for a web + mobile-based AI transcription service.
-Built with Flask and PostgreSQL.
-
-This backend will serve a mobile/web app that:
-- Accepts audio/video uploads
-- Stores transcription metadata
-- Simulates transcription + speaker identification (mocked for now)
-- Stores summaries
+A Flask-based backend service that stores audio transcriptions and AI-generated summaries. Enhanced with secure JWT-based authentication.
 
 ## Features
 
-- Full CRUD API for `transcriptions` and `summaries`
-- Each transcription can have one generated summary
-- PostgreSQL database with relational schema
-- RESTful endpoints
-- Meaningful error handling and validations
+- Store and manage transcription metadata
+- Attach summaries to transcription records
+- Secure authentication using JWT tokens
+- Password hashing using bcrypt
+- PostgreSQL database integration
+- CRUD operations for transcriptions and summaries
 
----
+## Tech Stack
 
-## Database Schema
-
-### `transcriptions`
-| Field           | Type     | Notes                           |
-|----------------|----------|----------------------------------|
-| id             | SERIAL   | Primary Key                      |
-| filename       | TEXT     | NOT NULL                         |
-| source_type    | TEXT     | ("live", "upload", "zoom", etc.) |
-| speaker_count  | INTEGER  | NOT NULL                         |
-| created_at     | TIMESTAMP | Defaults to `NOW()`             |
-
-### `summaries`
-| Field           | Type     | Notes                       |
-|----------------|----------|------------------------------|
-| id             | SERIAL   | Primary Key                  |
-| transcription_id | INTEGER | FK → transcriptions(id)     |
-| summary_text   | TEXT     | NOT NULL                     |
+- Python (Flask)
+- PostgreSQL
+- SQLAlchemy (raw SQL queries)
+- bcrypt (password hashing)
+- PyJWT (token-based auth)
+- Render (deployment)
+- Postman (API testing)
 
 ---
 
 ## API Endpoints
 
+### Auth
+
+| Method | Route              | Description                 |
+|--------|--------------------|-----------------------------|
+| POST   | `/auth/register`   | Register a new user         |
+| POST   | `/auth/login`      | Login and receive a token   |
+
 ### Transcriptions
-| Method | Endpoint                    | Description                   |
-|--------|-----------------------------|-------------------------------|
-| GET    | `/transcriptions`           | Get all transcriptions        |
-| GET    | `/transcriptions/<id>`      | Get a transcription by ID     |
-| POST   | `/transcriptions`           | Create a transcription        |
-| PUT    | `/transcriptions/<id>`      | Update a transcription        |
-| DELETE | `/transcriptions/<id>`      | Delete a transcription        |
+
+| Method | Route                     | Description                     |
+|--------|---------------------------|---------------------------------|
+| GET    | `/transcriptions/`        | Fetch all transcriptions        |
+| POST   | `/transcriptions/`        | Add a new transcription         |
+| GET    | `/transcriptions/<id>`    | Fetch single transcription      |
+| PUT    | `/transcriptions/<id>`    | Update transcription details    |
+| DELETE | `/transcriptions/<id>`    | Delete a transcription          |
 
 ### Summaries
-| Method | Endpoint        | Description                              |
-|--------|-----------------|------------------------------------------|
-| GET    | `/summaries`    | Get all summaries with filenames         |
-| POST   | `/summaries`    | Create a summary (link to transcription) |
+
+| Method | Route               | Description                     |
+|--------|---------------------|---------------------------------|
+| GET    | `/summaries/`       | Fetch all summaries             |
+| POST   | `/summaries/`       | Add a new summary               |
+| GET    | `/summaries/protected` | 🔐 Protected test route      |
 
 ---
 
-## How to Run Locally
+## Auth Flow
 
-### 1. Clone + Install
+1. **Register**
+   - `POST /auth/register`
+   - Body:
+     ```json
+     {
+       "username": "demo",
+       "password": "123456"
+     }
+     ```
 
-```bash
-git clone https://github.com/mirakour/Transcribe-AI-App.git
-cd Transcribe-AI-App
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+2. **Login**
+   - `POST /auth/login`
+   - Response:
+     ```json
+     {
+       "token": "eyJhbGciOi..."
+     }
+     ```
+
+3. **Access Protected Route**
+   - `GET /summaries/protected`
+   - Add header:
+     ```
+     Authorization: Bearer <your_token>
+     ```
+
+---
+
+## Local Development
+
+1. Clone the repo  
+   ```bash
+   git clone https://github.com/mirakour/Transcribe-AI-App.git
+   cd Transcribe-AI-App
