@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from queries.summaries import get_all_summaries, create_summary
+from utils.auth import auth_required
 
 summaries_bp = Blueprint('summaries', __name__)
 
@@ -12,6 +13,7 @@ def fetch_summaries():
         return jsonify({"error": str(e)}), 500
 
 @summaries_bp.route('/', methods=['POST'])
+@auth_required
 def add_summary():
     try:
         data = request.get_json()
@@ -25,3 +27,8 @@ def add_summary():
         return jsonify(new_summary), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@summaries_bp.route("/protected", methods=["GET"])
+@auth_required
+def protected_summary_view():
+    return {"message": f"You accessed a protected summary route!"}

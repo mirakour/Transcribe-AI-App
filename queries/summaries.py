@@ -1,4 +1,6 @@
 from db.client import get_connection
+from utils.auth import decode_token
+from flask import request
 
 def get_all_summaries():
     try:
@@ -44,3 +46,17 @@ def create_summary(transcription_id, summary_text):
         }
     except Exception as e:
         raise e
+    
+def auth_required(f):
+    def wrapper(*args, **kwargs):
+        token = request.headers.get("Authorization")
+        if not token:
+            return {"error": "Missing token"}, 401
+        try:
+            user = decode_token(token)
+            request.user = user  # optional
+            return f(*args, **kwargs)
+        except Exception:
+            return {"error": "Invalid or expired token"}, 403
+    wrapper.__name__ = f.__name__
+    return wrapper

@@ -14,3 +14,9 @@ CREATE TABLE summaries (
     transcription_id INTEGER REFERENCES transcriptions(id) ON DELETE CASCADE,
     summary_text TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS users (
+  id SERIAL PRIMARY KEY,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL
+);
